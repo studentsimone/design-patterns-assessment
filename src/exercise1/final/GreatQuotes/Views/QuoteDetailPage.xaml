@@ -30,6 +30,17 @@
                 TextColor="White" 
                 VerticalOptions="EndAndExpand"
                 Clicked="Handle_Clicked"/>
+        
+        <Label Grid.Row="1" Text="{Binding QuoteText}"
+        VerticalOptions="Start"
+        Style="{DynamicResource BodyStyle}">
+            <Label.GestureRecognizers>
+                <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="Handle_Tapped" />
+            </Label.GestureRecognizers>
+        </Label>
+
+
+
     </Grid>
     
 </ContentPage>

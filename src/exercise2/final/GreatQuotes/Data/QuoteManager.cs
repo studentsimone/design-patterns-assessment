@@ -6,16 +6,24 @@ using GreatQuotes.ViewModels;
 namespace GreatQuotes.Data {
     public class QuoteManager {
 
-        static readonly Lazy<QuoteManager> instance = new Lazy<QuoteManager>(() => new QuoteManager());
-
         private IQuoteLoader loader;
+        private ITextToSpeech tts;
 
-        public static QuoteManager Instance { get => instance.Value; }
+        public static QuoteManager Instance { get; private set; }
 
-        public IList<GreatQuoteViewModel> Quotes { get; set; }
+       
+        public IList<GreatQuoteViewModel> Quotes { get; private set; }
 
-        private QuoteManager() {
-            loader = QuoteLoaderFactory.Create();
+        public QuoteManager(IQuoteLoader loader, ITextToSpeech tts)
+        {
+            if (Instance != null)
+            {
+                throw new Exception("Can only create a single QuoteManager.");
+            }
+            Instance = this;
+
+            this.loader = loader;
+            this.tts = tts;
             Quotes = new ObservableCollection<GreatQuoteViewModel>(loader.Load());
         }
 
@@ -23,18 +31,20 @@ namespace GreatQuotes.Data {
             loader.Save(Quotes);
         }
 
-        public void SayQuote(GreatQuoteViewModel quote) {
+        public void SayQuote(GreatQuoteViewModel quote)
+        {
             if (quote == null)
                 throw new ArgumentNullException("No quote set");
 
-            ITextToSpeech tts = ServiceLocator.Instance.Resolve<ITextToSpeech>();
+            if (tts != null)
+            {
+                var text = quote.QuoteText;
 
-            var text = quote.QuoteText;
+                if (!string.IsNullOrWhiteSpace(quote.Author))
+                    text += $" by {quote.Author}";
 
-            if (!string.IsNullOrWhiteSpace(quote.Author))
-                text += $" by {quote.Author}";
-
-            tts.Speak(text);
+                tts.Speak(text);
+            }
         }
     }
 }

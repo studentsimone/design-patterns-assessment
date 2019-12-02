@@ -4,6 +4,7 @@ using Android.Content.PM;
 using Android.Runtime;
 using Android.OS;
 using GreatQuotes.Data;
+using GreatQuotes;
 
 namespace GreatQuotes.Droid {
     [Activity(Label = "@string/app_name", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
@@ -11,6 +12,8 @@ namespace GreatQuotes.Droid {
     {
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            ServiceLocator.Instance.Add<ITextToSpeech, TextToSpeechService>();
+
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 
@@ -30,5 +33,7 @@ namespace GreatQuotes.Droid {
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+
+       
     }
 }
